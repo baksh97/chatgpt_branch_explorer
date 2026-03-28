@@ -1,0 +1,96 @@
+/* graph.css — Branch Explorer Graph View */
+
+/* ── View toggle ─────────────────────────────────────────────────────────── */
+.gbx-view-toggle {
+  display: flex;
+  gap: 4px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--gbx-border);
+  background: var(--gbx-bg2);
+  flex-shrink: 0;
+}
+
+.gbx-view-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 5px 8px;
+  border: 1px solid var(--gbx-border);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--gbx-text3);
+  font-family: var(--gbx-mono);
+  font-size: 10px;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all var(--gbx-ease);
+}
+
+.gbx-view-btn:hover {
+  color: var(--gbx-text2);
+  border-color: var(--gbx-border2);
+  background: var(--gbx-bg3);
+}
+
+.gbx-view-btn.gbx-view-btn--active {
+  color: var(--gbx-blue);
+  border-color: rgba(91,156,246,.35);
+  background: var(--gbx-blue-dim);
+}
+
+/* ── Graph container ─────────────────────────────────────────────────────── */
+#gbx-graph-wrap {
+  flex: 1;
+  overflow: auto;
+  background: #141414;
+  position: relative;
+  display: none;  /* hidden by default; shown when graph view active */
+  scrollbar-width: thin;
+  scrollbar-color: #2e2e2e transparent;
+}
+
+#gbx-graph-wrap.gbx-graph-visible {
+  display: block;
+}
+
+#gbx-graph-wrap::-webkit-scrollbar       { width: 3px; height: 3px; }
+#gbx-graph-wrap::-webkit-scrollbar-thumb { background: #2e2e2e; border-radius: 2px; }
+
+/* ── Graph legend ────────────────────────────────────────────────────────── */
+.gbx-graph-legend {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  background: rgba(20,20,20,0.85);
+  border: 1px solid #2e2e2e;
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 10px;
+  color: #666;
+  font-family: 'IBM Plex Mono', monospace;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.gbx-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.gbx-legend-dot {
+  width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0;
+}
+
+/* ── SVG node hover ──────────────────────────────────────────────────────── */
+.gbx-gnode { transition: opacity 0.15s; }
+.gbx-gnode:hover { opacity: 0.92; }
+
+.gbx-add-btn circle { transition: fill 0.15s; }
+.gbx-add-btn:hover circle { fill: #383838; }

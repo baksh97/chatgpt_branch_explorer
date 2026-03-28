@@ -1,0 +1,416 @@
+/* sidebar.css — ChatGPT Branch Explorer */
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap');
+
+:root {
+  --gbx-bg:         #141414;
+  --gbx-bg2:        #1c1c1c;
+  --gbx-bg3:        #242424;
+  --gbx-border:     #2e2e2e;
+  --gbx-border2:    #383838;
+  --gbx-text:       #e8e8e8;
+  --gbx-text2:      #999;
+  --gbx-text3:      #666;
+  --gbx-blue:       #5b9cf6;
+  --gbx-blue-dim:   rgba(91,156,246,0.13);
+  --gbx-active:     #3d7eff;
+  --gbx-active-glow:rgba(61,126,255,0.18);
+  --gbx-orange:     #f5a623;
+  --gbx-w:          300px;
+  --gbx-r:          9px;
+  --gbx-mono:       'IBM Plex Mono', monospace;
+  --gbx-sans:       'IBM Plex Sans', system-ui, sans-serif;
+  --gbx-shadow:     0 8px 40px rgba(0,0,0,0.65), 0 2px 8px rgba(0,0,0,0.4);
+  --gbx-ease:       0.2s cubic-bezier(0.4,0,0.2,1);
+}
+
+/* ── Toggle tab ──────────────────────────────────────────────────────────── */
+#gbx-toggle {
+  position: fixed;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  z-index: 2147483646; /* max - 1 */
+  width: 34px;
+  height: 60px;
+  border: 1px solid var(--gbx-border);
+  border-right: none;
+  border-radius: var(--gbx-r) 0 0 var(--gbx-r);
+  background: var(--gbx-bg2);
+  color: var(--gbx-text2);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  box-shadow: -2px 0 12px rgba(0,0,0,0.35);
+  transition: color var(--gbx-ease), background var(--gbx-ease), transform var(--gbx-ease);
+  /* ALWAYS visible — no animation, no auto-hide */
+}
+#gbx-toggle:hover        { color: var(--gbx-blue); background: var(--gbx-bg3); }
+#gbx-toggle.gbx-active   { color: var(--gbx-blue); background: var(--gbx-bg3); transform: translateY(-50%) translateX(-3px); }
+
+/* ── Sidebar panel ───────────────────────────────────────────────────────── */
+#gbx-sidebar {
+  position: fixed;
+  top: 0; right: 0;
+  width: var(--gbx-w);
+  height: 100vh;
+  z-index: 2147483647;
+  background: var(--gbx-bg);
+  border-left: 1px solid var(--gbx-border);
+  box-shadow: var(--gbx-shadow);
+  display: flex;
+  flex-direction: column;
+  font-family: var(--gbx-sans);
+  font-size: 13px;
+  color: var(--gbx-text);
+  transform: translateX(100%);
+  transition: transform var(--gbx-ease);
+  overflow: hidden;
+}
+#gbx-sidebar.gbx-open { transform: translateX(0); }
+
+/* Header */
+.gbx-header {
+  display: flex; align-items: center; gap: 8px;
+  padding: 13px 15px;
+  border-bottom: 1px solid var(--gbx-border);
+  background: var(--gbx-bg2);
+  flex-shrink: 0;
+}
+.gbx-logo  { color: var(--gbx-blue); display: flex; align-items: center; }
+.gbx-title {
+  font-family: var(--gbx-mono); font-size: 11px; font-weight: 500;
+  letter-spacing: .06em; text-transform: uppercase; flex: 1;
+}
+.gbx-close {
+  width: 24px; height: 24px; border: none; border-radius: 5px;
+  background: transparent; color: var(--gbx-text3);
+  cursor: pointer; font-size: 12px;
+  display: flex; align-items: center; justify-content: center;
+  transition: background var(--gbx-ease), color var(--gbx-ease);
+}
+.gbx-close:hover { background: var(--gbx-bg3); color: var(--gbx-text); }
+
+/* Info box */
+.gbx-info {
+  margin: 11px 11px 0;
+  padding: 10px 12px;
+  background: var(--gbx-blue-dim);
+  border: 1px solid rgba(91,156,246,.18);
+  border-radius: 8px;
+  font-size: 11.5px;
+  line-height: 1.6;
+  color: var(--gbx-text2);
+  flex-shrink: 0;
+}
+.gbx-info strong {
+  display: block; color: var(--gbx-blue);
+  font-family: var(--gbx-mono); font-size: 10px;
+  text-transform: uppercase; letter-spacing: .05em; margin-bottom: 4px;
+}
+.gbx-info code {
+  font-family: var(--gbx-mono); font-size: 10.5px;
+  background: rgba(255,255,255,.06); padding: 1px 4px; border-radius: 3px;
+  color: var(--gbx-text);
+}
+
+/* Tree area */
+.gbx-tree-wrap {
+  flex: 1; overflow-y: auto; padding: 10px 0 6px;
+  scrollbar-width: thin; scrollbar-color: var(--gbx-border) transparent;
+}
+.gbx-tree-wrap::-webkit-scrollbar { width: 3px; }
+.gbx-tree-wrap::-webkit-scrollbar-thumb { background: var(--gbx-border); border-radius: 2px; }
+.gbx-tree { list-style: none; margin: 0; padding: 0 10px; }
+
+/* Empty state */
+.gbx-empty {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 7px; padding: 38px 20px; color: var(--gbx-text3); text-align: center;
+}
+.gbx-empty-icon { font-size: 28px; opacity: .35; }
+.gbx-empty-msg  { font-size: 13px; color: var(--gbx-text2); }
+.gbx-empty-sub  { font-size: 11.5px; line-height: 1.55; }
+
+/* Fork groups */
+.gbx-fork-group { list-style: none; margin-bottom: 14px; }
+.gbx-fork-header {
+  display: flex; align-items: center; gap: 6px;
+  padding: 5px 8px; border-radius: 6px; margin-bottom: 3px;
+  background: var(--gbx-bg2); border: 1px solid var(--gbx-border);
+}
+.gbx-fork-sym  { color: var(--gbx-orange); font-size: 13px; flex-shrink: 0; }
+.gbx-fork-lbl  {
+  flex: 1; font-size: 11.5px; color: var(--gbx-text2);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-style: italic;
+}
+.gbx-fork-pill {
+  font-family: var(--gbx-mono); font-size: 10px;
+  color: var(--gbx-orange);
+  background: rgba(245,166,35,.1); border: 1px solid rgba(245,166,35,.2);
+  border-radius: 4px; padding: 1px 5px; flex-shrink: 0;
+}
+
+/* Variants */
+.gbx-variants {
+  list-style: none; padding: 0 0 0 16px; margin: 0; position: relative;
+}
+.gbx-variants::before {
+  content: ''; position: fixed; left: 5px; top: 4px; bottom: 4px;
+  width: 1px; background: var(--gbx-border);
+}
+.gbx-var {
+  display: flex; align-items: center; gap: 8px;
+  padding: 5px 8px; border-radius: 5px; margin-bottom: 2px;
+  transition: background var(--gbx-ease); list-style: none;
+}
+.gbx-var { cursor: pointer; }
+.gbx-var:hover { background: var(--gbx-bg3); }
+.gbx-var-dot {
+  width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0;
+  background: var(--gbx-border2); transition: background var(--gbx-ease);
+}
+.gbx-var-dot--on { background: var(--gbx-active) !important; box-shadow: 0 0 5px var(--gbx-active-glow); }
+.gbx-var:hover .gbx-var-dot:not(.gbx-var-dot--on) { background: var(--gbx-blue); }
+.gbx-var-name { flex: 1; font-size: 12px; color: var(--gbx-text2); }
+.gbx-var:hover .gbx-var-name { color: var(--gbx-text); }
+
+/* Footer */
+.gbx-footer {
+  padding: 9px 11px; border-top: 1px solid var(--gbx-border); flex-shrink: 0;
+}
+.gbx-refresh {
+  width: 100%; padding: 7px 12px; background: transparent;
+  border: 1px solid var(--gbx-border); border-radius: 6px;
+  color: var(--gbx-text3); font-family: var(--gbx-mono); font-size: 11px;
+  letter-spacing: .04em; cursor: pointer;
+  transition: all var(--gbx-ease);
+}
+.gbx-refresh:hover { border-color: var(--gbx-border2); color: var(--gbx-text2); background: var(--gbx-bg2); }
+.gbx-load-all {
+  width: 100%; margin-top: 6px;
+  padding: 7px 12px; background: transparent;
+  border: 1px solid rgba(91,156,246,.25); border-radius: 6px;
+  color: var(--gbx-blue); font-family: var(--gbx-mono); font-size: 11px;
+  letter-spacing: .04em; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  transition: all var(--gbx-ease);
+}
+.gbx-load-all:hover { background: var(--gbx-blue-dim); border-color: rgba(91,156,246,.5); }
+.gbx-load-all[data-loading="1"] { opacity: .6; cursor: wait; }
+
+/* ── Fork-from-here button (on user messages) ────────────────────────────── */
+.gbx-fork-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 8px;
+  padding: 4px 10px;
+  background: var(--gbx-bg2);
+  border: 1px solid var(--gbx-border);
+  border-radius: 20px;
+  color: var(--gbx-text3);
+  font-family: var(--gbx-mono);
+  font-size: 10.5px;
+  letter-spacing: .03em;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity var(--gbx-ease), color var(--gbx-ease), border-color var(--gbx-ease), background var(--gbx-ease);
+  pointer-events: none;
+}
+/* Show on hover of the parent user message or the turn */
+[data-message-author-role='user']:hover .gbx-fork-btn,
+[data-testid^='conversation-turn-']:hover .gbx-fork-btn {
+  opacity: 1;
+  pointer-events: auto;
+}
+.gbx-fork-btn:hover {
+  color: var(--gbx-blue);
+  border-color: rgba(91,156,246,.4);
+  background: var(--gbx-blue-dim);
+}
+
+/* ── Selection menu ──────────────────────────────────────────────────────── */
+#gbx-sel-menu {
+  position: absolute;
+  z-index: 2147483647;
+  width: 210px;
+  background: var(--gbx-bg2);
+  border: 1px solid var(--gbx-border2);
+  border-radius: 10px;
+  box-shadow: var(--gbx-shadow);
+  font-family: var(--gbx-sans);
+  overflow: hidden;
+  /* Hidden by default */
+  display: none;
+  flex-direction: column;
+}
+#gbx-sel-menu.gbx-sm--on {
+  display: flex;
+  animation: gbx-pop .14s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes gbx-pop {
+  from { opacity:0; transform:scale(.92) translateY(4px); }
+  to   { opacity:1; transform:scale(1)   translateY(0); }
+}
+
+.gbx-sm-btn {
+  display: flex; align-items: center; gap: 8px;
+  padding: 9px 12px; background: transparent; border: none;
+  color: var(--gbx-text); font-family: var(--gbx-sans); font-size: 12.5px;
+  cursor: pointer; text-align: left; width: 100%;
+  transition: background var(--gbx-ease);
+}
+.gbx-sm-fork { color: var(--gbx-blue); }
+.gbx-sm-fork:hover { background: var(--gbx-blue-dim); }
+.gbx-sm-ask:hover  { background: var(--gbx-bg3); }
+.gbx-sm-what { color: var(--gbx-text2); font-size: 11.5px; }
+.gbx-sm-what:hover { background: var(--gbx-bg3); color: var(--gbx-text); }
+
+.gbx-sm-sep { height: 1px; background: var(--gbx-border); margin: 0 10px; }
+
+/* Explainer (hidden until "What's a branch?" is clicked) */
+.gbx-sm-explainer {
+  display: none;
+  padding: 10px 12px 12px;
+  font-size: 11.5px; line-height: 1.6; color: var(--gbx-text2);
+  border-top: 1px solid var(--gbx-border);
+  background: var(--gbx-bg);
+}
+.gbx-sm-explainer.gbx-sm-explainer--open { display: block; }
+.gbx-sm-explainer strong {
+  display: block; color: var(--gbx-blue);
+  font-family: var(--gbx-mono); font-size: 10px;
+  text-transform: uppercase; letter-spacing: .05em; margin-bottom: 4px;
+}
+.gbx-sm-explainer code {
+  font-family: var(--gbx-mono); font-size: 10.5px;
+  background: rgba(255,255,255,.06); padding: 1px 4px; border-radius: 3px;
+}
+.gbx-sm-got-it {
+  display: inline-block; margin-top: 8px;
+  padding: 3px 10px; background: var(--gbx-bg3);
+  border: 1px solid var(--gbx-border); border-radius: 5px;
+  color: var(--gbx-text3); font-size: 11px; cursor: pointer;
+  font-family: var(--gbx-sans);
+  transition: all var(--gbx-ease);
+}
+.gbx-sm-got-it:hover { color: var(--gbx-text); border-color: var(--gbx-border2); }
+
+/* ── Conversation outline (new sidebar design) ───────────────────────────── */
+
+/* Each user message row */
+.gbx-msg-item {
+  list-style: none;
+  margin-bottom: 2px;
+}
+
+.gbx-msg-row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background var(--gbx-ease);
+  position: relative;
+}
+
+.gbx-msg-row:hover { background: var(--gbx-bg3); }
+
+/* Active / currently-visible message */
+.gbx-msg-active > .gbx-msg-row {
+  background: rgba(91,156,246,0.1);
+  border: 1px solid rgba(91,156,246,0.28) !important;
+}
+.gbx-msg-active > .gbx-msg-row .gbx-msg-dot {
+  background: var(--gbx-blue) !important;
+  box-shadow: 0 0 5px rgba(91,156,246,0.5);
+}
+.gbx-msg-active > .gbx-msg-row .gbx-msg-text {
+  color: var(--gbx-text);
+  font-weight: 500;
+}
+
+.gbx-msg-item.gbx-msg-has-fork > .gbx-msg-row {
+  background: var(--gbx-bg2);
+  border: 1px solid var(--gbx-border);
+}
+
+.gbx-msg-item.gbx-msg-has-fork > .gbx-msg-row:hover {
+  border-color: var(--gbx-border2);
+  background: var(--gbx-bg3);
+}
+
+.gbx-msg-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--gbx-border2);
+  flex-shrink: 0;
+}
+
+.gbx-msg-has-fork > .gbx-msg-row .gbx-msg-dot {
+  background: var(--gbx-orange);
+}
+
+.gbx-msg-text {
+  flex: 1;
+  font-size: 12px;
+  color: var(--gbx-text2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.4;
+}
+
+/* Fork badge — "3 ⑂" */
+.gbx-fork-badge {
+  font-family: var(--gbx-mono);
+  font-size: 10px;
+  color: var(--gbx-orange);
+  background: rgba(245,166,35,.1);
+  border: 1px solid rgba(245,166,35,.2);
+  border-radius: 4px;
+  padding: 1px 6px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.gbx-fork-badge-sym { font-size: 11px; }
+
+/* Expand arrow */
+.gbx-expand-arrow {
+  font-size: 10px;
+  color: var(--gbx-text3);
+  flex-shrink: 0;
+  transition: color var(--gbx-ease);
+}
+.gbx-msg-row:hover .gbx-expand-arrow { color: var(--gbx-text2); }
+
+/* ── Fork button injected into ChatGPT's native selection popup ─────────── */
+.gbx-native-fork-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 14px;
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: #5b9cf6;
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s ease;
+}
+.gbx-native-fork-btn:hover {
+  background: rgba(91,156,246,0.08);
+}
+.gbx-native-fork-btn svg {
+  flex-shrink: 0;
+}
